@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>浅川陽一クイズ</title>
+<style>
+  body { font-family: sans-serif; padding: 1rem; max-width: 600px; margin: auto; }
+  .question { font-weight: bold; margin-top: 1rem; }
+  .options button { display: block; margin: 0.5rem 0; width: 100%; padding: 0.5rem; }
+  #result, #shareBtn { margin-top: 1.5rem; font-size: 1.2rem; }
+  #shareBtn { background: #1DA1F2; color: white; border: none; padding: 0.75rem; cursor: pointer; border-radius: 6px; }
+</style>
+</head>
+<body>
+<h1>浅川陽一クイズ</h1>
+<div id="quiz"></div>
+<div id="result"></div>
+<button id="shareBtn" style="display:none;" onclick="shareOnX()">結果をXでシェア</button>
+<script>
+const questions = [
+  { q: '浅川陽一の出身地は？', o: ['東京', '大阪', '福岡', '札幌'], a: 0 },
+  { q: '浅川陽一の職業は？', o: ['小説家', 'ジャーナリスト', 'カメラマン', '映画監督'], a: 1 },
+  // ...残り8問をここに追加...
+];
+let current = 0;
+let score = 0;
+
+function showQuestion() {
+  const q = questions[current];
+  const quizDiv = document.getElementById('quiz');
+  quizDiv.innerHTML = `<div class='question'>${current+1}. ${q.q}</div>` +
+    q.o.map((opt,i) => `<button onclick='checkAnswer(${i})'>${opt}</button>`).join('');
+}
+
+function checkAnswer(i) {
+  if (i === questions[current].a) score++;
+  current++;
+  if (current < questions.length) {
+    showQuestion();
+  } else {
+    endQuiz();
+  }
+}
+
+function endQuiz() {
+  document.getElementById('quiz').innerHTML = '';
+  document.getElementById('result').innerText = `あなたの得点は ${score}/${questions.length} 問正解です！`;
+  document.getElementById('shareBtn').style.display = 'block';
+}
+
+function shareOnX() {
+  const text = `浅川陽一クイズで ${score}/${questions.length} 問正解！あなたも挑戦しよう！ #DeadByDaylight #浅川陽一`;
+  const url = 'https://u-pos.github.io/asakawa-quiz';
+  const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+  window.open(shareUrl, '_blank');
+}
+
+showQuestion();
+</script>
+</body>
+</html>
