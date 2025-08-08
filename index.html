@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>浅川陽一 公式クイズ</title>
+<title>浅川陽一　10問クイズ</title>
 <style>
   body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -52,7 +52,7 @@
 </style>
 </head>
 <body>
-<h1>浅川陽一 公式クイズ</h1>
+<h1>浅川陽一　10問クイズ</h1>
 <div id="quiz"></div>
 <div id="result"></div>
 <button id="shareBtn" onclick="shareOnX()">結果をXでシェア</button>
@@ -142,12 +142,12 @@ function checkAnswer(selected) {
 function showResult() {
   document.getElementById("quiz").innerHTML = "";
   const resultDiv = document.getElementById("result");
-  resultDiv.textContent = `あなたの得点は ${score}/${questions.length} 問正解です！`;
+  resultDiv.textContent = `あなたは ${score}/${questions.length} 問正解です！`;
   document.getElementById("shareBtn").style.display = "block";
 }
 
 function shareOnX() {
-  const text = `浅川陽一公式クイズで ${score}/${questions.length} 問正解！あなたも挑戦しよう！ #DeadByDaylight #浅川陽一`;
+  const text = `浅川陽一　10問クイズで ${score}/${questions.length} 問正解！リプで結果を貼り付けてね！`;
   const url = "https://u-pos.github.io/yoichi-quiz"; // 実際の公開URLに変更してください
   const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
     text
