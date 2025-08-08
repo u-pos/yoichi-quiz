@@ -1,59 +1,158 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>浅川陽一クイズ</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>浅川陽一 公式クイズ</title>
 <style>
-  body { font-family: sans-serif; padding: 1rem; max-width: 600px; margin: auto; }
-  .question { font-weight: bold; margin-top: 1rem; }
-  .options button { display: block; margin: 0.5rem 0; width: 100%; padding: 0.5rem; }
-  #result, #shareBtn { margin-top: 1.5rem; font-size: 1.2rem; }
-  #shareBtn { background: #1DA1F2; color: white; border: none; padding: 0.75rem; cursor: pointer; border-radius: 6px; }
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    max-width: 600px;
+    margin: 1rem auto;
+    padding: 0 1rem;
+  }
+  h1 {
+    text-align: center;
+  }
+  .question {
+    font-weight: bold;
+    margin-top: 1.5rem;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.6rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background-color: #f9f9f9;
+  }
+  .options button:hover {
+    background-color: #e0f0ff;
+  }
+  #result {
+    font-size: 1.2rem;
+    margin-top: 2rem;
+    text-align: center;
+  }
+  #shareBtn {
+    display: none;
+    background-color: #1DA1F2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin: 2rem auto 1rem;
+    display: block;
+  }
 </style>
 </head>
 <body>
-<h1>浅川陽一クイズ</h1>
+<h1>浅川陽一 公式クイズ</h1>
 <div id="quiz"></div>
 <div id="result"></div>
-<button id="shareBtn" style="display:none;" onclick="shareOnX()">結果をXでシェア</button>
+<button id="shareBtn" onclick="shareOnX()">結果をXでシェア</button>
+
 <script>
 const questions = [
-  { q: '浅川陽一の出身地は？', o: ['東京', '大阪', '福岡', '札幌'], a: 0 },
-  { q: '浅川陽一の職業は？', o: ['小説家', 'ジャーナリスト', 'カメラマン', '映画監督'], a: 1 },
-  // ...残り8問をここに追加...
+  {
+    q: "浅川陽一の出身地はどこ？",
+    o: ["東京", "大阪", "名古屋", "福岡"],
+    a: 0
+  },
+  {
+    q: "浅川陽一の職業は？",
+    o: ["ジャーナリスト", "写真家", "小説家", "探偵"],
+    a: 0
+  },
+  {
+    q: "浅川陽一はどのような組織に所属していた？",
+    o: ["政府機関", "大手新聞社", "民間企業の調査部", "自営業"],
+    a: 1
+  },
+  {
+    q: "浅川陽一が取材していたのは主に何に関すること？",
+    o: ["政治スキャンダル", "環境問題", "犯罪と陰謀", "芸能ニュース"],
+    a: 2
+  },
+  {
+    q: "浅川陽一がデッドバイデイライトの世界に巻き込まれたきっかけは？",
+    o: ["謎の事故", "取材中の事件", "家族を守るため", "旅行中の遭遇"],
+    a: 1
+  },
+  {
+    q: "浅川陽一の性格を表す言葉として適切なのは？",
+    o: ["好奇心旺盛", "臆病", "短気", "社交的"],
+    a: 0
+  },
+  {
+    q: "浅川陽一が特に大切にしている信念は？",
+    o: ["真実を追求すること", "富を得ること", "名声を得ること", "自由を求めること"],
+    a: 0
+  },
+  {
+    q: "浅川陽一が得意とする能力は？",
+    o: ["格闘技", "調査と分析", "ステルス行動", "医療知識"],
+    a: 1
+  },
+  {
+    q: "浅川陽一はどんなタイプの人間関係を築く？",
+    o: ["独立独歩", "仲間と強い絆", "競争的な関係", "無関心"],
+    a: 1
+  },
+  {
+    q: "浅川陽一の人生に影響を与えたのは？",
+    o: ["幼少期の体験", "大学時代の恩師", "戦場経験", "仕事での失敗"],
+    a: 0
+  }
 ];
-let current = 0;
+
+let currentIndex = 0;
 let score = 0;
 
 function showQuestion() {
-  const q = questions[current];
-  const quizDiv = document.getElementById('quiz');
-  quizDiv.innerHTML = `<div class='question'>${current+1}. ${q.q}</div>` +
-    q.o.map((opt,i) => `<button onclick='checkAnswer(${i})'>${opt}</button>`).join('');
+  const quizDiv = document.getElementById("quiz");
+  const question = questions[currentIndex];
+  quizDiv.innerHTML =
+    `<div class="question">${currentIndex + 1}. ${question.q}</div>` +
+    question.o
+      .map(
+        (opt, i) =>
+          `<div class="options"><button onclick="checkAnswer(${i})">${opt}</button></div>`
+      )
+      .join("");
 }
 
-function checkAnswer(i) {
-  if (i === questions[current].a) score++;
-  current++;
-  if (current < questions.length) {
+function checkAnswer(selected) {
+  if (selected === questions[currentIndex].a) {
+    score++;
+  }
+  currentIndex++;
+  if (currentIndex < questions.length) {
     showQuestion();
   } else {
-    endQuiz();
+    showResult();
   }
 }
 
-function endQuiz() {
-  document.getElementById('quiz').innerHTML = '';
-  document.getElementById('result').innerText = `あなたの得点は ${score}/${questions.length} 問正解です！`;
-  document.getElementById('shareBtn').style.display = 'block';
+function showResult() {
+  document.getElementById("quiz").innerHTML = "";
+  const resultDiv = document.getElementById("result");
+  resultDiv.textContent = `あなたの得点は ${score}/${questions.length} 問正解です！`;
+  document.getElementById("shareBtn").style.display = "block";
 }
 
 function shareOnX() {
-  const text = `浅川陽一クイズで ${score}/${questions.length} 問正解！あなたも挑戦しよう！ #DeadByDaylight #浅川陽一`;
-  const url = 'https://u-pos.github.io/asakawa-quiz';
-  const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-  window.open(shareUrl, '_blank');
+  const text = `浅川陽一公式クイズで ${score}/${questions.length} 問正解！あなたも挑戦しよう！ #DeadByDaylight #浅川陽一`;
+  const url = "https://u-pos.github.io/yoichi-quiz"; // 実際の公開URLに変更してください
+  const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+    text
+  )}&url=${encodeURIComponent(url)}`;
+  window.open(shareUrl, "_blank");
 }
 
 showQuestion();
