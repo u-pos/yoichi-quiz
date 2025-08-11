@@ -6,13 +6,13 @@
 <title>浅川陽一クイズ 豪華版</title>
 <style>
   body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background: linear-gradient(to bottom, #f0f8ff, #cceeff);
-    max-width: 600px;
-    margin: 1rem auto;
-    padding: 0 1rem;
-    transition: background-color 0.8s ease;
-  }
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background: linear-gradient(to bottom, #f0f8ff, #cceeff);
+  max-width: 600px;
+  margin: 1rem auto;
+  padding: 0 1rem;
+  transition: background-color 0.8s ease;  /* backgroundColor に効く */
+}
   h1 {
     text-align: center;
   }
@@ -139,7 +139,7 @@ function updateProgress() {
 function setBackgroundFlash(color) {
   document.body.style.backgroundColor = color;
   setTimeout(() => {
-    document.body.style.background = "linear-gradient(to bottom, #f0f8ff, #cceeff)";
+    document.body.style.backgroundColor = "";  // CSSのグラデ戻す
   }, 800);
 }
 
