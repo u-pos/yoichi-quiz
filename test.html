@@ -1,16 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>浅川陽一クイズ</title>
+<style>
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: linear-gradient(to bottom, #f9f9f9, #d9e9f9);
+    max-width: 600px;
+    margin: 1rem auto;
+    padding: 0 1rem;
+    transition: background-color 0.8s ease;
+  }
+  h1 {
+    text-align: center;
+  }
+  #progressBar {
+    background-color: #eee;
+    border-radius: 6px;
+    height: 10px;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  #progress {
+    background-color: #4a90e2;
+    height: 100%;
+    border-radius: 6px;
+    width: 0%;
+    transition: width 0.3s;
+  }
+  #quiz {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .question {
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.6rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background-color: #f9f9f9;
+    transition: all 0.2s ease;
+  }
+  .options button:hover {
+    transform: scale(1.03);
+    background-color: #d0e6ff;
+  }
+  #result {
+    font-size: 1.2rem;
+    margin-top: 2rem;
+    text-align: center;
+  }
+  #shareBtn {
+    display: none;
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin: 2rem auto 1rem;
+    display: block;
+  }
+  .correct {
+    animation: correctPulse 0.5s ease;
+    background-color: #b4e1a1 !important;
+  }
+  @keyframes correctPulse {
+    0% { background-color: #b4e1a1; }
+    50% { background-color: #91d174; }
+    100% { background-color: #b4e1a1; }
+  }
+  .wrong {
+    animation: wrongShake 0.4s ease;
+    background-color: #f7a1a1 !important;
+  }
+  @keyframes wrongShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+</style>
+</head>
+<body>
+<h1>浅川陽一クイズ</h1>
+<div id="progressBar"><div id="progress"></div></div>
+<div id="quiz"></div>
+<div id="result"></div>
+<button id="shareBtn" onclick="shareOnX()">結果をXでシェア</button>
 
-
-<button id="btnPlay">音を鳴らす</button>
-<audio id="audioTest" src="correct.mp3" preload="auto"></audio>
 <script>
-document.getElementById("btnPlay").addEventListener("click", () => {
-  const audio = document.getElementById("audioTest");
-  audio.currentTime = 0;
-  audio.play().then(() => {
-    console.log("再生OK");
-  }).catch(e => {
-    console.log("再生エラー:", e);
-  });
-});
-</script>
+const questions = [
+  {
+    q: "浅川陽一の通っていた大学はどこにある？",
+    o: ["東京", "大阪", "名古屋", "福岡"],
+    a: 0
+  },
+  {
+    q: "浅川陽一が大学時代に属していた学部は？",
+    o: ["造船工学部", "海洋生物学部", "医学部", "薬学部"],
+    a: 1
+  },
+  {
+    q: "浅川陽一は教授を辞めた後、どの組織に所属していた？",
+    o: ["政府機関", "大手新聞社", "民間企業の調査部", "造船関連企業"],
+    a: 1
+  },
+  {
+    q: "浅川陽一が取材していたのは主に何に関すること？",
+    o: ["政治スキャンダル", "環境問題", "犯罪と陰謀", "芸能ニュース"],
+    a: 2
+  },
+  {
+    q: "浅川陽一がデッドバイデイライトの世界に巻き込まれたきっかけは？",
+    o: ["謎の事故", "取材中の事件", "家族を守るため", "旅行中の遭遇"],
+    a: 1
+  },
+  {
+    q: "浅川陽一が研究しなかったものは次のうちどれ？",
+    o: ["民族史", "超心理学", "神学", "哲学"],
+    a: 3
+  },
+  {
+    q: "陽一の研究によると、スコットランドの灯台近くで何人のビデオブロガーが失踪した？",
+    o: ["4人", "5人", "6人", "7人"],
+    a: 0
+  },
+  {
+    q: "浅川陽一が得意とする能力は？",
+    o: ["格闘技", "調査と分析", "ステルス行動", "医療知識"],
+    a: 1
+  },
+  {
+    q: "浅川陽一はどんなタイプの人間関係を築く？",
+    o: ["独立独歩", "仲間との強い絆", "競争的な関係", "無関心"],
+    a: 1
+  },
+  {
+    q: "浅川陽一の人生に影響を与えたのは？",
+    o: ["幼少期の体験", "大学時代の恩師", "戦場経験", "仕事での失敗"],
+    a: 0
+  }
+];
 
+let currentIndex = 0;
+let score = 0;
+
+function updateProgress() {
+  const percent = currentIndex >= questions.length ? 100 : (currentIndex / questions.length) * 100;
+  document.getElementById("progress").style.width = percent + "%";
+}
+
+function showQuestion() {
+  updateProgress();
+  const quizDiv = document.getElementById("quiz");
+  const resultDiv = document.getElementById("result");
+  resultDiv.textContent = "";
+  const shareBtn = document.getElementById("shareBtn");
+  shareBtn.style.display = "none";
+
+  const question = questions[currentIndex];
+  quizDiv.innerHTML =
+    `<div class="question">${currentIndex + 1}. ${question.q}</div>` +
+    question.o
+      .map(
+        (opt, i) =>
+          `<div class="options"><button onclick="checkAnswer(${i})">${opt}</button></div>`
+      )
+      .join("");
+
+  setTimeout(() => {
+    document.querySelectorAll(".options button").forEach(btn => btn.blur());
+  }, 0);
+}
+
+function checkAnswer(selected) {
+  const correctIndex = questions[currentIndex].a;
+  const optionButtons = document.querySelectorAll(".options button");
+
+  optionButtons[correctIndex].classList.add("correct");
+  optionButtons[correctIndex].innerHTML += " ✅";
+
+  if (selected !== correctIndex) {
+    optionButtons[selected].classList.add("wrong");
+    optionButtons[selected].innerHTML += " ❌";
+  } else {
+    score++;
+  }
+
+  optionButtons.forEach(btn => btn.disabled = true);
+
+  setTimeout(() => {
+    currentIndex++;
+    if (currentIndex < questions.length) {
+      showQuestion();
+    } else {
+      showResult();
+      updateProgress();
+    }
+  }, 2000);
+}
+
+function showResult() {
+  document.getElementById("quiz").innerHTML = "";
+  const resultDiv = document.getElementById("result");
+  resultDiv.textContent = `あなたは ${score}/${questions.length} 問正解です！`;
+  document.getElementById("shareBtn").style.display = "block";
+}
+
+function shareOnX() {
+  const text = `浅川陽一クイズで ${score}/${questions.length} 問正解！引用かリツイートで結果を投稿してね！`;
+  const url = "https://u-pos.github.io/yoichi-quiz"; // URLは適宜変更してください
+  const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+    text
+  )}&url=${encodeURIComponent(url)}`;
+  window.open(shareUrl, "_blank");
+}
+
+showQuestion();
+</script>
+</body>
+</html>
