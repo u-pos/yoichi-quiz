@@ -11,7 +11,7 @@
     max-width: 600px;
     margin: 1rem auto;
     padding: 0 1rem;
-    transition: background-color 0.8s ease; /* 背景演出用 */
+    transition: background-color 0.8s ease;
   }
   h1 {
     text-align: center;
@@ -131,7 +131,8 @@ function playSound(id) {
 }
 
 function updateProgress() {
-  const percent = (currentIndex / questions.length) * 100;
+  // 問題が終わってる場合は100%にする
+  const percent = currentIndex >= questions.length ? 100 : (currentIndex / questions.length) * 100;
   document.getElementById("progress").style.width = percent + "%";
 }
 
@@ -145,6 +146,11 @@ function setBackgroundFlash(color) {
 function showQuestion() {
   updateProgress();
   const quizDiv = document.getElementById("quiz");
+  const resultDiv = document.getElementById("result");
+  resultDiv.textContent = "";
+  const shareBtn = document.getElementById("shareBtn");
+  shareBtn.style.display = "none";
+
   const question = questions[currentIndex];
   quizDiv.innerHTML =
     `<div class="question">${currentIndex + 1}. ${question.q}</div>` +
@@ -188,6 +194,7 @@ function checkAnswer(selected) {
     } else {
       showResult();
       playSound("sound-finish");
+      updateProgress(); // 終了後にプログレスバー100%に更新
     }
   }, 2000);
 }
