@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>浅川陽一クイズ</title>
+<style>
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    max-width: 600px;
+    margin: 1rem auto;
+    padding: 0 1rem;
+  }
+  h1 {
+    text-align: center;
+  }
+  .question {
+    font-weight: bold;
+    margin-top: 1.5rem;
+  }
+  .options button {
+    display: block;
+    width: 100%;
+    margin: 0.5rem 0;
+    padding: 0.6rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+  .options button:hover {
+    background-color: #e0f0ff;
+  }
+  .options button.correct {
+    background-color: #c8f7c5; /* 緑 */
+    border-color: #2ecc71;
+  }
+  .options button.wrong {
+    background-color: #f7c5c5; /* 赤 */
+    border-color: #e74c3c;
+  }
+  #result {
+    font-size: 1.2rem;
+    margin-top: 2rem;
+    text-align: center;
+  }
+  #shareBtn {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease; /* フェードイン用 */
+    background-color: #1DA1F2;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin: 2rem auto 1rem;
+  }
+  #shareBtn.show {
+    display: block;
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+<h1>浅川陽一クイズ</h1>
+<div id="quiz"></div>
+<div id="result"></div>
+<button id="shareBtn" onclick="shareOnX()">結果をXでシェア</button>
+
+<script>
+const questions = [
+  { q: "浅川陽一の通っていた大学はどこにある？", o: ["東京", "大阪", "名古屋", "福岡"], a: 0 },
+  { q: "浅川陽一が大学時代に属していた学部は？", o: ["造船工学部", "海洋生物学部", "医学部", "薬学部"], a: 1 },
+  { q: "浅川陽一は教授を辞めた後、どの組織に所属していた？", o: ["政府機関", "大手新聞社", "民間企業の調査部", "造船関連企業"], a: 1 },
+  { q: "浅川陽一が取材していたのは主に何に関すること？", o: ["政治スキャンダル", "環境問題", "犯罪と陰謀", "芸能ニュース"], a: 2 },
+  { q: "浅川陽一がデッドバイデイライトの世界に巻き込まれたきっかけは？", o: ["謎の事故", "取材中の事件", "家族を守るため", "旅行中の遭遇"], a: 1 },
+  { q: "浅川陽一が研究しなかったものは次のうちどれ？", o: ["民族史", "超心理学", "神学", "哲学"], a: 3 },
+  { q: "陽一の研究によると、スコットランドの灯台近くで何人のビデオブロガーが失踪した？", o: ["4人", "5人", "6人", "7人"], a: 0 },
+  { q: "浅川陽一が得意とする能力は？", o: ["格闘技", "調査と分析", "ステルス行動", "医療知識"], a: 1 },
+  { q: "浅川陽一はどんなタイプの人間関係を築く？", o: ["独立独歩", "仲間との強い絆", "競争的な関係", "無関心"], a: 1 },
+  { q: "浅川陽一の人生に影響を与えたのは？", o: ["幼少期の体験", "大学時代の恩師", "戦場経験", "仕事での失敗"], a: 0 }
+];
+
+let currentIndex = 0;
+let score = 0;
+
+function showQuestion() {
+  const quizDiv = document.getElementById("quiz");
+  const question = questions[currentIndex];
+  quizDiv.innerHTML =
+    `<div class="question">${currentIndex + 1}. ${question.q}</div>` +
+    question.o
+      .map((opt, i) => `<div class="options"><button onclick="checkAnswer(${i})">${opt}</button></div>`)
+      .join("");
+
+  // ボタンのフォーカスを外す（前回の青枠防止）
+  setTimeout(() => {
+    document.querySelectorAll("button").forEach(btn => btn.blur());
+  }, 0);
+}
+
+function checkAnswer(selected) {
+  const correctIndex = questions[currentIndex].a;
+  const optionButtons = document.querySelectorAll(".options button");
+
+  // 正解ボタンを緑に
+  optionButtons[correctIndex].classList.add("correct");
+
+  // 不正解を押した場合は赤に
+  if (selected !== correctIndex) {
+    optionButtons[selected].classList.add("wrong");
+  } else {
+    score++;
+  }
+
+  // 1秒後に次の問題へ
+  setTimeout(() => {
+    currentIndex++;
+    if (currentIndex < questions.length) {
+      showQuestion();
+    } else {
+      showResult();
+    }
+  }, 1000);
+}
+
+function showResult() {
+  document.getElementById("quiz").innerHTML = "";
+  const resultDiv = document.getElementById("result");
+  resultDiv.textContent = `あなたは ${score}/${questions.length} 問正解です！`;
+
+  // シェアボタンをフェードイン表示
+  const shareBtn = document.getElementById("shareBtn");
+  shareBtn.classList.add("show");
+}
+
+function shareOnX() {
+  const text = `浅川陽一クイズで ${score}/${questions.length} 問正解！引用かリツイートで結果を投稿してね！`;
+  const url = "https://u-pos.github.io/yoichi-quiz"; // 公開URLに置き換え
+  const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+  window.open(shareUrl, "_blank");
+}
+
+// 初期表示
+showQuestion();
+</script>
+</body>
+</html>
