@@ -3,20 +3,16 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>浅川陽一クイズ 豪華版</title>
+<title>Dead by Daylightクイズ</title>
 <style>
-  html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  background: linear-gradient(to bottom, #f0f8ff, #cceeff);
-  transition: background-color 0.8s ease;
-  min-height: 100vh;
-}
+  body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: linear-gradient(to bottom, #f0f8ff, #cceeff);
+    max-width: 600px;
+    margin: 1rem auto;
+    padding: 0 1rem;
+    transition: background-color 0.8s ease;
+  }
   h1 {
     text-align: center;
   }
@@ -77,7 +73,6 @@ body {
     margin: 2rem auto 1rem;
     display: block;
   }
-  /* 正解アニメーション */
   .correct {
     animation: correctPulse 0.5s ease;
     background-color: #c8f7c5 !important;
@@ -87,7 +82,6 @@ body {
     50% { background-color: #a5e3a2; }
     100% { background-color: #c8f7c5; }
   }
-  /* 不正解アニメーション */
   .wrong {
     animation: wrongShake 0.4s ease;
     background-color: #f7c5c5 !important;
@@ -100,7 +94,7 @@ body {
 </style>
 </head>
 <body>
-<h1>浅川陽一クイズ</h1>
+<h1>Dead by Daylightクイズ</h1>
 <div id="progressBar"><div id="progress"></div></div>
 <div id="quiz"></div>
 <div id="result"></div>
@@ -113,16 +107,56 @@ body {
 
 <script>
 const questions = [
-  { q: "浅川陽一の通っていた大学はどこにある？", o: ["東京", "大阪", "名古屋", "福岡"], a: 0 },
-  { q: "浅川陽一が大学時代に属していた学部は？", o: ["造船工学部", "海洋生物学部", "医学部", "薬学部"], a: 1 },
-  { q: "浅川陽一は教授を辞めた後、どの組織に所属していた？", o: ["政府機関", "大手新聞社", "民間企業の調査部", "造船関連企業"], a: 1 },
-  { q: "浅川陽一が取材していたのは主に何に関すること？", o: ["政治スキャンダル", "環境問題", "犯罪と陰謀", "芸能ニュース"], a: 2 },
-  { q: "浅川陽一がデッドバイデイライトの世界に巻き込まれたきっかけは？", o: ["謎の事故", "取材中の事件", "家族を守るため", "旅行中の遭遇"], a: 1 },
-  { q: "浅川陽一が研究しなかったものは次のうちどれ？", o: ["民族史", "超心理学", "神学", "哲学"], a: 3 },
-  { q: "陽一の研究によると、スコットランドの灯台近くで何人のビデオブロガーが失踪した？", o: ["4人", "5人", "6人", "7人"], a: 0 },
-  { q: "浅川陽一が得意とする能力は？", o: ["格闘技", "調査と分析", "ステルス行動", "医療知識"], a: 1 },
-  { q: "浅川陽一はどんなタイプの人間関係を築く？", o: ["独立独歩", "仲間との強い絆", "競争的な関係", "無関心"], a: 1 },
-  { q: "浅川陽一の人生に影響を与えたのは？", o: ["幼少期の体験", "大学時代の恩師", "戦場経験", "仕事での失敗"], a: 0 }
+  {
+    q: "Dead by Daylightの開発元はどこの国の会社？",
+    o: ["カナダ", "アメリカ", "オーストラリア", "イギリス"],
+    a: 0
+  },
+  {
+    q: "Dead by Daylightに登場するキラー「レイス」の本名は？",
+    o: ["フェリックス・リックス", "フィリップ・オジョモ", "ポール・モルガン", "トーマス・リース"],
+    a: 1
+  },
+  {
+    q: "Dead by Daylightの発売初日に対応していたプラットフォームはどれ？",
+    o: ["PCとPlayStation 4", "PCのみ", "PCとXbox One", "PlayStation 4とXbox One"],
+    a: 1
+  },
+  {
+    q: "Dead by Daylightのキラー「ナース」の本名は？",
+    o: ["サリー・スミスソン", "ペニー・ライス", "リサ・シャーマン", "メアリー・ジョーンズ"],
+    a: 0
+  },
+  {
+    q: "キラー「ドレッジ」と「ナイト」の間にリリースされたのは誰？",
+    o: ["スカルマーチャント", "ウェスカー", "シンギュラリティ", "ネメシス"],
+    a: 1
+  },
+  {
+    q: "ドクターと一緒に実装されたサバイバーは誰？",
+    o: ["ケイト・デンソン", "ビル・ウィリアムズ", "エース・ヴィスコンティ", "フェン・ミン"],
+    a: 3
+  },
+  {
+    q: "スカルマーチャントがDead by Daylightに実装された年は？",
+    o: ["2021年", "2022年", "2023年", "2024年"],
+    a: 2
+  },
+  {
+    q: "Dead by Daylightで「ザ・ヒルビリー」の本名は？",
+    o: ["サイモン・リード", "マックス・トンプソン・ジュニア", "エドワード・カーミット", "マーク・ヒル"],
+    a: 1
+  },
+  {
+    q: "Dead by Daylightの音楽やサウンドデザインを担当しているのは誰？",
+    o: ["マーク・ロウレンス", "ミシェル・メイソン", "グレッグ・エリス", "サイモン・ヴィクランド"],
+    a: 3
+  },
+  {
+    q: "Dead by Daylightの世界観で、サバイバーたちを異世界に誘う「エンティティ」は元々何に由来する？",
+    o: ["古代神話の闇の神", "人間の恐怖の集合体", "宇宙の混沌の象徴", "死者の魂の集合体"],
+    a: 1
+  }
 ];
 
 let currentIndex = 0;
@@ -130,24 +164,16 @@ let score = 0;
 
 function playSound(id) {
   const audio = document.getElementById(id);
+  if (!audio) return;
   audio.currentTime = 0;
-  audio.play();
+  audio.play().catch(e => {
+    console.log("音再生エラー:", e);
+  });
 }
 
 function updateProgress() {
-  // 問題が終わってる場合は100%にする
   const percent = currentIndex >= questions.length ? 100 : (currentIndex / questions.length) * 100;
   document.getElementById("progress").style.width = percent + "%";
-}
-
-function setBackgroundFlash(color) {
-  document.body.style.backgroundColor = color;
-  document.documentElement.style.backgroundColor = color; // htmlタグにも設定
-
-  setTimeout(() => {
-    document.body.style.backgroundColor = "";
-    document.documentElement.style.backgroundColor = "";
-  }, 800);
 }
 
 function showQuestion() {
@@ -168,7 +194,6 @@ function showQuestion() {
       )
       .join("");
 
-  // ハイライト解除
   setTimeout(() => {
     document.querySelectorAll(".options button").forEach(btn => btn.blur());
   }, 0);
@@ -185,11 +210,9 @@ function checkAnswer(selected) {
     optionButtons[selected].classList.add("wrong");
     optionButtons[selected].innerHTML += " ❌";
     playSound("sound-wrong");
-    setBackgroundFlash("#ffcccc"); // 赤背景
   } else {
     score++;
     playSound("sound-correct");
-    setBackgroundFlash("#ccffcc"); // 緑背景
   }
 
   optionButtons.forEach(btn => btn.disabled = true);
@@ -201,7 +224,7 @@ function checkAnswer(selected) {
     } else {
       showResult();
       playSound("sound-finish");
-      updateProgress(); // 終了後にプログレスバー100%に更新
+      updateProgress();
     }
   }, 2000);
 }
@@ -214,13 +237,14 @@ function showResult() {
 }
 
 function shareOnX() {
-  const text = `浅川陽一クイズで ${score}/${questions.length} 問正解！引用かリツイートで結果を投稿してね！`;
-  const url = "https://u-pos.github.io/yoichi-quiz";
+  const text = `Dead by Daylightクイズで ${score}/${questions.length} 問正解！引用かリツイートで結果を投稿してね！`;
+  const url = "https://u-pos.github.io/yoichi-quiz"; // URLは適宜変更してください
   const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
     text
   )}&url=${encodeURIComponent(url)}`;
   window.open(shareUrl, "_blank");
 }
+
 showQuestion();
 </script>
 </body>
