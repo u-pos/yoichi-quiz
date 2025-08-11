@@ -11,6 +11,9 @@
     margin: 1rem auto;
     padding: 0 1rem;
   }
+  button:focus {
+  outline: none;
+}
   h1 {
     text-align: center;
   }
@@ -126,10 +129,6 @@ function showQuestion() {
       )
       .join("");
       
-// ここで全ボタンのフォーカスを解除
-  setTimeout(() => {
-    document.querySelectorAll("button").forEach(btn => btn.blur());
-  }, 0);
 }
 
 function checkAnswer(selected) {
