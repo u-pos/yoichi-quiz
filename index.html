@@ -3,49 +3,58 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>浅川陽一クイズ</title>
+<title>浅川陽一クイズ 豪華版</title>
 <style>
   body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background: linear-gradient(to bottom, #f0f8ff, #cceeff);
     max-width: 600px;
     margin: 1rem auto;
     padding: 0 1rem;
+    transition: background-color 0.8s ease; /* 背景演出用 */
   }
   h1 {
     text-align: center;
   }
+  #progressBar {
+    background-color: #eee;
+    border-radius: 6px;
+    height: 10px;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+  #progress {
+    background-color: #1DA1F2;
+    height: 100%;
+    border-radius: 6px;
+    width: 0%;
+    transition: width 0.3s;
+  }
+  #quiz {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
   .question {
     font-weight: bold;
-    margin-top: 1.5rem;
+    margin-bottom: 1rem;
   }
   .options button {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    display: block;
     width: 100%;
     margin: 0.5rem 0;
     padding: 0.6rem;
     font-size: 1rem;
     border-radius: 6px;
     border: 1px solid #ccc;
-    cursor: pointer; }
-
-  .options button.correct {
-    background-color: #c8f7c5; /* 緑 */
-    border-color: #2ecc71;
+    cursor: pointer;
+    background-color: #f9f9f9;
+    transition: all 0.2s ease;
   }
-  .options button.wrong {
-    background-color: #f7c5c5; /* 赤 */
-    border-color: #e74c3c;
-  }
-  /* フォーカス時の水色枠を消す */
-  .options button:focus {
-    outline: none;
-    box-shadow: none;
-  }
-  .icon {
-    font-size: 1.2rem;
-    margin-left: 1rem;
+  .options button:hover {
+    transform: scale(1.03);
+    background-color: #e0f0ff;
   }
   #result {
     font-size: 1.2rem;
@@ -54,8 +63,6 @@
   }
   #shareBtn {
     display: none;
-    opacity: 0;
-    transition: opacity 0.5s ease; /* フェードイン用 */
     background-color: #1DA1F2;
     color: white;
     border: none;
@@ -64,18 +71,41 @@
     font-size: 1.1rem;
     cursor: pointer;
     margin: 2rem auto 1rem;
-  }
-  #shareBtn.show {
     display: block;
-    opacity: 1;
+  }
+  /* 正解アニメーション */
+  .correct {
+    animation: correctPulse 0.5s ease;
+    background-color: #c8f7c5 !important;
+  }
+  @keyframes correctPulse {
+    0% { background-color: #c8f7c5; }
+    50% { background-color: #a5e3a2; }
+    100% { background-color: #c8f7c5; }
+  }
+  /* 不正解アニメーション */
+  .wrong {
+    animation: wrongShake 0.4s ease;
+    background-color: #f7c5c5 !important;
+  }
+  @keyframes wrongShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
   }
 </style>
 </head>
 <body>
 <h1>浅川陽一クイズ</h1>
+<div id="progressBar"><div id="progress"></div></div>
 <div id="quiz"></div>
 <div id="result"></div>
 <button id="shareBtn" onclick="shareOnX()">結果をXでシェア</button>
+
+<!-- 効果音 -->
+<audio id="sound-correct" src="correct.mp3" preload="auto"></audio>
+<audio id="sound-wrong" src="wrong.mp3" preload="auto"></audio>
+<audio id="sound-finish" src="finish.mp3" preload="auto"></audio>
 
 <script>
 const questions = [
@@ -94,51 +124,70 @@ const questions = [
 let currentIndex = 0;
 let score = 0;
 
+function playSound(id) {
+  const audio = document.getElementById(id);
+  audio.currentTime = 0;
+  audio.play();
+}
+
+function updateProgress() {
+  const percent = (currentIndex / questions.length) * 100;
+  document.getElementById("progress").style.width = percent + "%";
+}
+
+function setBackgroundFlash(color) {
+  document.body.style.backgroundColor = color;
+  setTimeout(() => {
+    document.body.style.background = "linear-gradient(to bottom, #f0f8ff, #cceeff)";
+  }, 800);
+}
+
 function showQuestion() {
+  updateProgress();
   const quizDiv = document.getElementById("quiz");
   const question = questions[currentIndex];
   quizDiv.innerHTML =
     `<div class="question">${currentIndex + 1}. ${question.q}</div>` +
     question.o
-      .map((opt, i) => `<div class="options"><button data-index="${i}"><span>${opt}</span><span class="icon"></span></button></div>`)
+      .map(
+        (opt, i) =>
+          `<div class="options"><button onclick="checkAnswer(${i})">${opt}</button></div>`
+      )
       .join("");
 
-  // クリックイベント登録
-  document.querySelectorAll(".options button").forEach(btn => {
-    btn.addEventListener("click", () => {
-      checkAnswer(parseInt(btn.dataset.index));
-    });
-    // フォーカスを解除
-    btn.blur();
-  });
+  // ハイライト解除
+  setTimeout(() => {
+    document.querySelectorAll(".options button").forEach(btn => btn.blur());
+  }, 0);
 }
 
 function checkAnswer(selected) {
   const correctIndex = questions[currentIndex].a;
   const optionButtons = document.querySelectorAll(".options button");
 
-  // 正解ボタンに✅アイコンと緑背景
   optionButtons[correctIndex].classList.add("correct");
-  optionButtons[correctIndex].querySelector(".icon").textContent = "✅";
+  optionButtons[correctIndex].innerHTML += " ✅";
 
-  // 不正解の場合は❌アイコンと赤背景
   if (selected !== correctIndex) {
     optionButtons[selected].classList.add("wrong");
-    optionButtons[selected].querySelector(".icon").textContent = "❌";
+    optionButtons[selected].innerHTML += " ❌";
+    playSound("sound-wrong");
+    setBackgroundFlash("#ffcccc"); // 赤背景
   } else {
     score++;
+    playSound("sound-correct");
+    setBackgroundFlash("#ccffcc"); // 緑背景
   }
 
-  // 全ボタンを無効化
   optionButtons.forEach(btn => btn.disabled = true);
 
-  // 2秒後に次の問題へ
   setTimeout(() => {
     currentIndex++;
     if (currentIndex < questions.length) {
       showQuestion();
     } else {
       showResult();
+      playSound("sound-finish");
     }
   }, 2000);
 }
@@ -147,20 +196,18 @@ function showResult() {
   document.getElementById("quiz").innerHTML = "";
   const resultDiv = document.getElementById("result");
   resultDiv.textContent = `あなたは ${score}/${questions.length} 問正解です！`;
-
-  // シェアボタンをフェードイン
-  const shareBtn = document.getElementById("shareBtn");
-  shareBtn.classList.add("show");
+  document.getElementById("shareBtn").style.display = "block";
 }
 
 function shareOnX() {
   const text = `浅川陽一クイズで ${score}/${questions.length} 問正解！引用かリツイートで結果を投稿してね！`;
-  const url = "https://u-pos.github.io/yoichi-quiz"; // 公開URLに変更
-  const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+  const url = "https://u-pos.github.io/yoichi-quiz";
+  const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+    text
+  )}&url=${encodeURIComponent(url)}`;
   window.open(shareUrl, "_blank");
 }
 
-// 初期表示
 showQuestion();
 </script>
 </body>
