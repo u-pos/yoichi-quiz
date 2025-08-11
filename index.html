@@ -198,7 +198,15 @@ function checkAnswer(selected) {
     }
   }, 2000);
 }
-
+function playSound(id) {
+  const audio = document.getElementById(id);
+  if (!audio) return;
+  audio.volume = 0.2;  // ここで全効果音の音量を一括で設定
+  audio.currentTime = 0;
+  audio.play().catch(e => {
+    console.log("音再生エラー:", e);
+  });
+}
 function showResult() {
   document.getElementById("quiz").innerHTML = "";
   const resultDiv = document.getElementById("result");
