@@ -100,11 +100,6 @@
 <div id="result"></div>
 <button id="shareBtn" onclick="shareOnX()">結果をXでシェア</button>
 
-<!-- 効果音 -->
-<audio id="sound-correct" src="correct.mp3" preload="auto"></audio>
-<audio id="sound-wrong" src="wrong.mp3" preload="auto"></audio>
-<audio id="sound-finish" src="finish.mp3" preload="auto"></audio>
-
 <script>
 const questions = [
   {
@@ -162,15 +157,6 @@ const questions = [
 let currentIndex = 0;
 let score = 0;
 
-function playSound(id) {
-  const audio = document.getElementById(id);
-  if (!audio) return;
-  audio.currentTime = 0;
-  audio.play().catch(e => {
-    console.log("音再生エラー:", e);
-  });
-}
-
 function updateProgress() {
   const percent = currentIndex >= questions.length ? 100 : (currentIndex / questions.length) * 100;
   document.getElementById("progress").style.width = percent + "%";
@@ -209,10 +195,8 @@ function checkAnswer(selected) {
   if (selected !== correctIndex) {
     optionButtons[selected].classList.add("wrong");
     optionButtons[selected].innerHTML += " ❌";
-    playSound("sound-wrong");
   } else {
     score++;
-    playSound("sound-correct");
   }
 
   optionButtons.forEach(btn => btn.disabled = true);
@@ -223,7 +207,6 @@ function checkAnswer(selected) {
       showQuestion();
     } else {
       showResult();
-      playSound("sound-finish");
       updateProgress();
     }
   }, 2000);
