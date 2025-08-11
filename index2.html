@@ -19,7 +19,9 @@
     margin-top: 1.5rem;
   }
   .options button {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
     margin: 0.5rem 0;
     padding: 0.6rem;
@@ -40,6 +42,10 @@
   .options button.wrong {
     background-color: #f7c5c5; /* 赤 */
     border-color: #e74c3c;
+  }
+  .icon {
+    font-size: 1.2rem;
+    margin-left: 1rem;
   }
   #result {
     font-size: 1.2rem;
@@ -94,10 +100,17 @@ function showQuestion() {
   quizDiv.innerHTML =
     `<div class="question">${currentIndex + 1}. ${question.q}</div>` +
     question.o
-      .map((opt, i) => `<div class="options"><button onclick="checkAnswer(${i})">${opt}</button></div>`)
+      .map((opt, i) => `<div class="options"><button data-index="${i}"><span>${opt}</span><span class="icon"></span></button></div>`)
       .join("");
 
-  // ボタンのフォーカスを外す（前回の青枠防止）
+  // クリックイベント登録
+  document.querySelectorAll(".options button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      checkAnswer(parseInt(btn.dataset.index));
+    });
+  });
+
+  // 前回のフォーカス枠を外す
   setTimeout(() => {
     document.querySelectorAll("button").forEach(btn => btn.blur());
   }, 0);
@@ -107,15 +120,20 @@ function checkAnswer(selected) {
   const correctIndex = questions[currentIndex].a;
   const optionButtons = document.querySelectorAll(".options button");
 
-  // 正解ボタンを緑に
+  // 正解ボタンに✅アイコンと緑背景
   optionButtons[correctIndex].classList.add("correct");
+  optionButtons[correctIndex].querySelector(".icon").textContent = "✅";
 
-  // 不正解を押した場合は赤に
+  // 不正解の場合は❌アイコンと赤背景
   if (selected !== correctIndex) {
     optionButtons[selected].classList.add("wrong");
+    optionButtons[selected].querySelector(".icon").textContent = "❌";
   } else {
     score++;
   }
+
+  // 全ボタンを無効化
+  optionButtons.forEach(btn => btn.disabled = true);
 
   // 1秒後に次の問題へ
   setTimeout(() => {
@@ -133,14 +151,14 @@ function showResult() {
   const resultDiv = document.getElementById("result");
   resultDiv.textContent = `あなたは ${score}/${questions.length} 問正解です！`;
 
-  // シェアボタンをフェードイン表示
+  // シェアボタンをフェードイン
   const shareBtn = document.getElementById("shareBtn");
   shareBtn.classList.add("show");
 }
 
 function shareOnX() {
   const text = `浅川陽一クイズで ${score}/${questions.length} 問正解！引用かリツイートで結果を投稿してね！`;
-  const url = "https://u-pos.github.io/yoichi-quiz"; // 公開URLに置き換え
+  const url = "https://u-pos.github.io/yoichi-quiz"; // 公開URLに変更
   const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
   window.open(shareUrl, "_blank");
 }
