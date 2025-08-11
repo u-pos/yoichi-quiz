@@ -125,6 +125,11 @@ function showQuestion() {
           `<div class="options"><button onclick="checkAnswer(${i})">${opt}</button></div>`
       )
       .join("");
+      
+// ここで全ボタンのフォーカスを解除
+  setTimeout(() => {
+    document.querySelectorAll("button").forEach(btn => btn.blur());
+  }, 0);
 }
 
 function checkAnswer(selected) {
