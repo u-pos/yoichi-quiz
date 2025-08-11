@@ -43,6 +43,11 @@
     background-color: #f7c5c5; /* 赤 */
     border-color: #e74c3c;
   }
+  /* フォーカス時の水色枠を消す */
+  .options button:focus {
+    outline: none;
+    box-shadow: none;
+  }
   .icon {
     font-size: 1.2rem;
     margin-left: 1rem;
@@ -108,12 +113,9 @@ function showQuestion() {
     btn.addEventListener("click", () => {
       checkAnswer(parseInt(btn.dataset.index));
     });
+    // フォーカスを解除
+    btn.blur();
   });
-
-  // 前回のフォーカス枠を外す
-  setTimeout(() => {
-    document.querySelectorAll("button").forEach(btn => btn.blur());
-  }, 0);
 }
 
 function checkAnswer(selected) {
@@ -135,7 +137,7 @@ function checkAnswer(selected) {
   // 全ボタンを無効化
   optionButtons.forEach(btn => btn.disabled = true);
 
-  // 1秒後に次の問題へ
+  // 2秒後に次の問題へ
   setTimeout(() => {
     currentIndex++;
     if (currentIndex < questions.length) {
@@ -143,7 +145,7 @@ function checkAnswer(selected) {
     } else {
       showResult();
     }
-  }, 1000);
+  }, 2000);
 }
 
 function showResult() {
