@@ -5,13 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>浅川陽一クイズ 豪華版</title>
 <style>
-  body {
+  html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   background: linear-gradient(to bottom, #f0f8ff, #cceeff);
-  max-width: 600px;
-  margin: 1rem auto;
-  padding: 0 1rem;
-  transition: background-color 0.8s ease;  /* backgroundColor に効く */
+  transition: background-color 0.8s ease;
+  min-height: 100vh;
 }
   h1 {
     text-align: center;
@@ -138,8 +142,11 @@ function updateProgress() {
 
 function setBackgroundFlash(color) {
   document.body.style.backgroundColor = color;
+  document.documentElement.style.backgroundColor = color; // htmlタグにも設定
+
   setTimeout(() => {
-    document.body.style.backgroundColor = "";  // CSSのグラデ戻す
+    document.body.style.backgroundColor = "";
+    document.documentElement.style.backgroundColor = "";
   }, 800);
 }
 
